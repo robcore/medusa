@@ -1,0 +1,20 @@
+TOOLCHAIN=/opt/arm-eabi-4.6/bin/arm-eabi-
+KPATH=~/sgs4/src/9500-u1/kernel
+PLAT=I9500
+ARCH=arm
+
+obj-m := medusa.o
+
+default: medusa.ko
+
+medusa.ko: medusa.c
+	make ARCH=${ARCH} -C ${KPATH} M=${PWD} CROSS_COMPILE=${TOOLCHAIN} CFLAGS_MODULE="-fno-pic -Wall" EXTRA_CFLAGS=-DPLAT_${PLAT}
+
+install: medusa.ko
+	adb push medusa.ko /system/bench
+
+clean:
+	rm -f *.mod.* *.ko *.o Module.* modules.* .*.cmd
+	rm -rf .tmp_versions
+	rm -f cscope*
+
